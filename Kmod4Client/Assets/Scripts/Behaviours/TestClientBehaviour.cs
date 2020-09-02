@@ -125,7 +125,7 @@ public class TestClientBehaviour : V2Singleton<TestClientBehaviour>
     protected override void Awake()
     {
         base.Awake();
-        responder = new ClientResponder(this);     
+        responder = new ClientResponder(this);
     }  
 
     void Start()

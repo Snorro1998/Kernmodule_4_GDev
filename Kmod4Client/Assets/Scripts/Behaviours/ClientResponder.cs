@@ -5,10 +5,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Networking.Transport;
 
-public class ClientResponder : MonoBehaviour
+public class ClientResponder
 {
     public TestClientBehaviour client;
-
+    
     public ClientResponder(TestClientBehaviour _client)
     {
         client = _client;
