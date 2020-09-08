@@ -21,4 +21,12 @@ public class LoginPanel : MonoBehaviour
             //voer een naam in!
         }
     }
+
+    public void Register()
+    {
+        if (userNameField.text != "")
+        {
+            TestClientBehaviour.Instance.RegisterToServer((NativeString64)userNameField.text, (NativeString64)passwordField.text);
+        }
+    }
 }

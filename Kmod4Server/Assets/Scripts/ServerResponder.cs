@@ -8,11 +8,74 @@ using Unity.Networking.Transport;
 
 public class ServerResponder
 {
+    public static readonly int MAX_BYTES_PER_MESSAGE_FOR_IMAGES = 1300;
     public TestServerBehaviour server;
 
     public ServerResponder(TestServerBehaviour _server)
     {
         server = _server;
+    }
+
+    public void SendImageToAll(byte[] imgData)
+    {
+        //byte[] testByte = new byte[] { 0, 1, 2, 3, 4, 5 };
+        //int maxBytesPerMessage = 10;
+        int nMessages = Mathf.CeilToInt((float)imgData.Length / (float)MAX_BYTES_PER_MESSAGE_FOR_IMAGES);
+        //Debug.Log("testbytelength = " + testByte.Length + ", maxpermess = " + MAX_BYTES_PER_MESSAGE_FOR_IMAGES + ", nmess = " + nMessages);
+
+        for (int i = 0; i < nMessages; i++)
+        {
+            List<byte> dataToSend = new List<byte>();
+            int dataSize = MAX_BYTES_PER_MESSAGE_FOR_IMAGES;
+            // int baseIndex = i * MAX_BYTES_PER_MESSAGE_FOR_IMAGES;
+            
+
+            for (int j = 0; j < MAX_BYTES_PER_MESSAGE_FOR_IMAGES; j++)
+            {
+                if (i * MAX_BYTES_PER_MESSAGE_FOR_IMAGES + j >= imgData.Length)
+                {
+                    //Debug.Log("eindbericht heeft een lengte van " + j);
+                    dataSize = j;
+                    break;
+                }
+                //Debug.Log("elem = " + testByte[i * MAX_BYTES_PER_MESSAGE_FOR_IMAGES + j]);
+                dataToSend.Add(imgData[i * MAX_BYTES_PER_MESSAGE_FOR_IMAGES + j]);
+            }
+            // tijdelijke lijst omzetten zodat je eindelijk een geknipt deel van de data hebt.
+            byte[] sendData = new byte[dataSize];
+            for (int k = 0; k < dataSize; k++)
+            {
+                sendData[k] = dataToSend[k];
+            }
+
+            MessageImageSend.DataType dat = MessageImageSend.DataType.singlething;
+            
+            if (i == 0)
+            {
+                if (i == nMessages - 1)
+                {
+                    dat = MessageImageSend.DataType.singlething;
+                }
+                else
+                {
+                    dat = MessageImageSend.DataType.start;
+                }
+            }
+            else if (i == nMessages - 1)
+            {
+                dat = MessageImageSend.DataType.end;
+            }
+            else
+            {
+                dat = MessageImageSend.DataType.middle;
+            }
+
+            MessageImageSend message = new MessageImageSend(sendData, (uint)(sendData.Length), dat);
+            foreach (var player in server.playerManager.newOnlinePlayers)
+            {
+                MessageManager.SendMessage(server.networkDriver, message, player.connection);
+            }
+        }
     }
 
     /// <summary>
@@ -25,6 +88,14 @@ public class ServerResponder
         MessageLogin message = MessageManager.ReadMessage<MessageLogin>(reader) as MessageLogin;
         ChatManager.Instance.SendMessageToChat("Client probeert in te loggen met de gegevens '" + message.userName + "', '" + message.password + "'");
         TestPlayerManager.LoginResult result = server.playerManager.AttemptLogin(message.userName.ToString(), message.password.ToString(), ref nw);
+        // registreer nieuwe gebruiker
+        if (result == TestPlayerManager.LoginResult.nonExistingName && message.newUser == 1)
+        {
+            // TODO voeg naam aan db toe
+            server.playerManager.AddNewUserToDB(message.userName.ToString(), message.password.ToString());
+            result = TestPlayerManager.LoginResult.success;
+        }
+
         MessageLoginResponse loginResponse = new MessageLoginResponse(result);
         MessageManager.SendMessage(server.networkDriver, loginResponse, nw);
     }

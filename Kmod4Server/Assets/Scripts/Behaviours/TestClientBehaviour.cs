@@ -42,7 +42,7 @@ public class TestClientBehaviour : V2Singleton<TestClientBehaviour>
 
     public void LoginToServer(NativeString64 userName, NativeString64 password)
     {
-        var message = new MessageLogin(userName, password);
+        var message = new MessageLogin(userName, password, 0);
         MessageManager.SendMessage(networkDriver, message, networkConnection);
     }
 
@@ -136,7 +136,7 @@ public class TestClientBehaviour : V2Singleton<TestClientBehaviour>
                         MessageText msgText = MessageManager.ReadMessage<MessageText>(reader) as MessageText;
                         ChatManager.Instance.SendMessageToChat(msgText.txt.ToString());
                         break;
-                    case Message.MessageType.login:
+                    case Message.MessageType.userLogin:
                         HandleLoginResponse(networkConnection, reader);
                         break;
                 }

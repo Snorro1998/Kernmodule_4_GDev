@@ -12,14 +12,16 @@ public abstract class Message
         invalid = 0,
         alive,
         textMessage,
-        login,
+        userLogin,
+        userRegister,
         askLobbyList,
         sendLobbyList,
         sendLobbyInfo,
         joinLobby,
         startLobby,
         gameGiveTurn,
-        gameAttack
+        gameAttack,
+        imageSend
     }
 
     public virtual void Sending(ref DataStreamWriter writer)

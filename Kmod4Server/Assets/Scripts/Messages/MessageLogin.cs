@@ -6,29 +6,21 @@ using UnityEngine;
 
 public class MessageLogin : Message
 {
-    public override MessageType Type => MessageType.login;
+    public override MessageType Type => MessageType.userLogin;
     public NativeString64 userName = "Montana";
     public NativeString64 password = "Jones";
-    /*//public LoginType loginType = LoginType.loginAttempt;
-
-    public enum LoginType
-    {
-        loginAttempt,
-        wrongPassword,
-        alreadyLoggedIn,
-        //failed,
-        success
-    }*/
+    public byte newUser = 0;
 
     public MessageLogin()
     {
 
     }
 
-    public MessageLogin(NativeString64 _userName, NativeString64 _password)
+    public MessageLogin(NativeString64 _userName, NativeString64 _password, byte _newUser)
     {
         userName = _userName;
         password = _password;
+        newUser = _newUser;
     }
 
     public override void Sending(ref DataStreamWriter writer)
@@ -36,6 +28,7 @@ public class MessageLogin : Message
         base.Sending(ref writer);
         writer.WriteString(userName);
         writer.WriteString(password);
+        writer.WriteByte(newUser);
     }
 
     public override void Receiving(ref DataStreamReader reader)
@@ -43,5 +36,6 @@ public class MessageLogin : Message
         base.Receiving(ref reader);
         userName = reader.ReadString();
         password = reader.ReadString();
+        newUser = reader.ReadByte();
     }
 }

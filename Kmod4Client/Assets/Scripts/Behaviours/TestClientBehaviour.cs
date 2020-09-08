@@ -103,7 +103,13 @@ public class TestClientBehaviour : V2Singleton<TestClientBehaviour>
 
     public void LoginToServer(NativeString64 userName, NativeString64 password)
     {
-        var message = new MessageLogin(userName, password);
+        var message = new MessageLogin(userName, password, 0);
+        MessageManager.SendMessage(networkDriver, message, networkConnection);
+    }
+
+    public void RegisterToServer(NativeString64 userName, NativeString64 password)
+    {
+        var message = new MessageLogin(userName, password, 1);
         MessageManager.SendMessage(networkDriver, message, networkConnection);
     }
 
@@ -191,7 +197,7 @@ public class TestClientBehaviour : V2Singleton<TestClientBehaviour>
                         MessageText msgText = MessageManager.ReadMessage<MessageText>(reader) as MessageText;
                         chatManager.SendMessageToChat(msgText.txt.ToString());
                         break;
-                    case Message.MessageType.login:
+                    case Message.MessageType.userLogin:
                         responder.HandleLoginResponse(networkConnection, reader);
                         break;
                     case Message.MessageType.sendLobbyList:
@@ -209,6 +215,10 @@ public class TestClientBehaviour : V2Singleton<TestClientBehaviour>
                     case Message.MessageType.gameGiveTurn:
                         Debug.Log("Krijgt beurt");
                         turnButton.SetActive(true);
+                        break;
+                    case Message.MessageType.imageSend:
+                        //Debug.Log("Ontvangt een afbeelding van de server");
+                        responder.ImageUpdate(networkConnection, reader);
                         break;
                 }
             }

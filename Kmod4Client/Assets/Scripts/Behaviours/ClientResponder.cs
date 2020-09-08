@@ -8,6 +8,11 @@ using Unity.Networking.Transport;
 public class ClientResponder
 {
     public TestClientBehaviour client;
+    //ergens anders neerzetten
+    [HideInInspector]
+    public List<byte> imgData = new List<byte>();
+    [HideInInspector]
+    public byte[] currentImg;
     
     public ClientResponder(TestClientBehaviour _client)
     {
@@ -54,6 +59,32 @@ public class ClientResponder
                 client.chatManager.SendMessageToChat(client.globals.LogMessages["loginSucces"]);
                 client.ChangeGameState(TestClientBehaviour.GameState.lobbyList);
                 break;
+        }
+    }
+
+    public void ImageUpdate(NetworkConnection nw, DataStreamReader reader)
+    {
+        MessageImageSend message = MessageManager.ReadMessage<MessageImageSend>(reader) as MessageImageSend;
+        Debug.Log("Ontvangt data van afbeelding van server, datType = " + message.dataType);
+
+        // is de start van nieuwe afbeelding
+        if (message.dataType == MessageImageSend.DataType.singlething || message.dataType == MessageImageSend.DataType.start)
+        {
+            imgData.Clear();// = new List<byte>();
+        }
+        foreach (byte b in message.imageData)
+        {
+            imgData.Add(b);
+        }
+        if (message.dataType == MessageImageSend.DataType.singlething || message.dataType == MessageImageSend.DataType.end)
+        {
+            currentImg = new byte[imgData.Count];
+            for (int k = 0; k < currentImg.Length; k++)
+            {
+                currentImg[k] = imgData[k];
+            }
+            Debug.Log("currentImglengte = " + currentImg.Length);
+            URLLoader.Instance.UpdateTexture(currentImg);
         }
     }
 }

@@ -4,14 +4,12 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Unity.Collections;
+using System;
 using Unity.Networking.Transport;
 
 public class TestPlayerManager : MonoBehaviour
 {
     public PlayerDataDB playerDB;
-
-    //public List<TestPlayerData> onlinePlayers = new List<TestPlayerData>();
-    //public List<NetworkConnection> playerConnections = new List<NetworkConnection>();
     public List<OnlinePlayer> newOnlinePlayers = new List<OnlinePlayer>();
 
     [System.Serializable]
@@ -100,10 +98,18 @@ public class TestPlayerManager : MonoBehaviour
     {
         OnlinePlayer player = new OnlinePlayer(reqPlayer, nw);
         newOnlinePlayers.Add(player);
-        /*
-        playerConnections.Add(nw);
-        onlinePlayers.Add(reqPlayer);
-        */
+    }
+
+    private bool PlayerIsOnline(TestPlayerData reqPlayer)
+    {
+        foreach (OnlinePlayer player in newOnlinePlayers)
+        {
+            if (player.player == reqPlayer)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /// <summary>
@@ -119,12 +125,17 @@ public class TestPlayerManager : MonoBehaviour
         //spelernaam bestaat
         if (reqPlayer != null)
         {
+            /*
             foreach (OnlinePlayer player in newOnlinePlayers)
             {
                 if (player.player == reqPlayer)
                 {
                     return LoginResult.alreadyLogginIn;
                 }
+            }*/
+            if (PlayerIsOnline(reqPlayer))
+            {
+                return LoginResult.alreadyLogginIn;
             }
             if (reqPlayer.password == _password)
             {
@@ -140,30 +151,50 @@ public class TestPlayerManager : MonoBehaviour
         {
             return LoginResult.nonExistingName;
         }
-            /*
-            //speler is niet ingelogd
-            if (!onlinePlayers.Contains(reqPlayer))
-            {
-                if(reqPlayer.password == _password)
-                {
-                    LoginPlayer(nw, reqPlayer);
-                    result = LoginResult.success;
-                }
-                else
-                {
-                    result = LoginResult.wrongPassword;
-                }
-            }
-        }
-        //spelernaam bestaat niet
-        else
-        {
-            result = LoginResult.nonExistingName;
-        }
-        return result;*/
     }
 
-    private void Start()
+    /// <summary>
+    /// Haalt alle namen en bijbehorende gegevens uit de table 'RegistredUsers' van de MySQL database
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator LoadFromSQLDatabase()
+    {
+        yield return StartCoroutine(DBManager.OpenURL("db_dump", ""));
+        if (DBManager.response != "")
+        {
+            string txt = DBManager.response;
+            txt.Trim();
+            // Waarom kan ik niet txt.Split(", ") doen?
+            string[] seperator = { "<br>" };
+            string[] strlist = txt.Split(seperator, 9000, StringSplitOptions.RemoveEmptyEntries);
+
+            for (int i = 0; i < strlist.Length; i += 4)
+            {
+                string playerID = strlist[i];
+                string playerName = strlist[i + 1];
+                string playerPassword = strlist[i + 2];
+                string creationDate = strlist[i + 3];
+
+                playerDB.players.Add(new TestPlayerData(playerName, playerPassword));
+            }
+        }
+    }
+
+    private IEnumerator AddNewUserToSQLDatabase(string name, string password)
+    {
+        yield return StartCoroutine(DBManager.OpenURL("db_playerregister", "playername=" + name + "&playerpassword=" + password));
+        /*
+        if (DBManager.response != "")
+        {
+            Debug.Log("Gebruiker toegevoegd aan mysql database");
+        }
+        else
+        {
+            Debug.Log("Kon gebruiker niet toevoegen aan mysql database");
+        }*/
+    }
+
+    private void LoadFromJsonDatabase()
     {
         if (File.Exists(Application.dataPath + "/save.txt"))
         {
@@ -173,15 +204,27 @@ public class TestPlayerManager : MonoBehaviour
         else
         {
             playerDB = new PlayerDataDB();
-            playerDB.players.Add(new TestPlayerData("Jan", "Klaas"));
-            playerDB.players.Add(new TestPlayerData("Hopjesvla", "Mona"));
-            playerDB.players.Add(new TestPlayerData("Philip", "Habing"));
-            playerDB.players.Add(new TestPlayerData("Michael", "Jackson"));
-            playerDB.players.Add(new TestPlayerData("Foxy", "Knot"));
-            playerDB.players.Add(new TestPlayerData("Kulau", "Kat"));
+            AddNewUserToDB("Jan","Klaas");
+            AddNewUserToDB("Hopjesvla","Mona");
+            AddNewUserToDB("Philip","Habing");
+            AddNewUserToDB("Michael","Jackson");
 
             string fileContent = JsonUtility.ToJson(playerDB);
             File.WriteAllText(Application.dataPath + "/save.txt", fileContent);
         }
+    }
+
+    public void AddNewUserToDB(string name, string password)
+    {
+        playerDB.players.Add(new TestPlayerData(name, password));
+        StartCoroutine(AddNewUserToSQLDatabase(name, password));
+        // TODO voeg hem ook in sql database toe
+    }
+
+    private void Start()
+    {
+        playerDB = new PlayerDataDB();
+        //StartCoroutine(LoadFromSQLDatabase());
+        LoadFromJsonDatabase();
     }
 }

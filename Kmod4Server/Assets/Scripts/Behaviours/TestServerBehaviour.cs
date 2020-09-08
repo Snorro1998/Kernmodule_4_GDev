@@ -1,25 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Unity.Collections;
 using Unity.Networking.Transport;
 
+using UnityEngine.UI;
+
 public class TestServerBehaviour : V2Singleton<TestServerBehaviour>
 {
-    private static ushort networkPort = 9000;
+    private static readonly ushort networkPort = 9000;
     // Moet in elk geval kleiner zijn dan 30 om te voorkomen dat de verbinding automatisch verbroken wordt
-    private static float pingInterval = 5;
+    private static readonly float pingInterval = 5;
     private bool pingCoroutineRunning = false;
 
     public NetworkDriver networkDriver;
     private NativeList<NetworkConnection> networkConnections;
 
     public TestPlayerManager playerManager;
-    private ServerResponder responder;// = new ServerResponder();
+    public ServerResponder responder;// = new ServerResponder();
 
     public List<Lobby> lobbies = new List<Lobby>();
+
+    public bool GetImage = false;
+    public Texture2D testTexture;
 
     private Lobby GetPlayerLobby(NetworkConnection nw)
     {
@@ -37,6 +43,62 @@ public class TestServerBehaviour : V2Singleton<TestServerBehaviour>
             }
         }
         return lob;
+    }
+
+    public IEnumerator GetNamesFromDBRoutine()
+    {
+        yield return StartCoroutine(DBManager.OpenURL("db_dump", ""));
+        if (DBManager.response != "")
+        {
+            string txt = DBManager.response;
+            txt.Trim();
+            Debug.Log(txt);
+            // Waarom kan ik niet txt.Split(", ") doen?
+            string[] seperator = { "<br>" };
+            string[] strlist = txt.Split(seperator, 9000, StringSplitOptions.RemoveEmptyEntries);
+            
+            for (int i = 0; i < strlist.Length; i+=4)
+            {
+                string playerID = strlist[i];
+                string playerName = strlist[i + 1];
+                string playerPassword = strlist[i + 2];
+                string creationDate = strlist[i + 3];
+
+                Debug.Log("playerID = " + playerID + ", playerName = " + playerName + ", playerPassword = " + playerPassword + ", CreationDate = " + creationDate);
+            }
+        }
+    }
+
+    public IEnumerator LoginRoutine(NativeString64 username, NativeString64 password)
+    {
+        yield return StartCoroutine(DBManager.OpenURL("db_userlogin","playername="+ username +"&playerpassword="+ password +""));
+        if (DBManager.response != "")
+        {
+            string txt = DBManager.response;
+            txt.Trim();
+            Debug.Log(txt);
+            //kan inloggen
+            if (txt == "invalidUsername")
+            {
+                Debug.Log("Gebruikersnaam bestaat niet");
+            }
+            else if (txt == "invalidCredentials")
+            {
+                Debug.Log("Wachtwoord klopt niet");
+            }
+            else
+            {
+                Debug.Log("Met succes ingelogd");
+            }
+        }
+        /*
+        yield return StartCoroutine(DatabaseManager.GetHttp($"UserLogin.php?userid={Username.text}&password={Password.text}&session_id={DatabaseManager.sessionID}"));
+        
+        if (DatabaseManager.response != 0 + "")
+        {
+            myData = JsonUtility.FromJson<UserData>(DatabaseManager.response);
+            ToggleLoginScreen();
+        }*/
     }
 
     public MessageJoinLobby.LobbyStat CheckIfLobbyExists(string _lobbyName, int _lobbyID/*, out Lobby lobby*/)
@@ -183,6 +245,14 @@ public class TestServerBehaviour : V2Singleton<TestServerBehaviour>
         CleanUpConnections();
         AcceptNewConnections();
 
+        if (GetImage)
+        {
+            GetImage = false;
+            //responder.SendImageToAll(testTexture.GetRawTextureData());
+            URLLoader.Instance.GetImage();
+            //responder.SendImageToAll(null);
+        }
+
         DataStreamReader stream;
         for (int i = 0; i < networkConnections.Length; i++)
         {
@@ -218,7 +288,7 @@ public class TestServerBehaviour : V2Singleton<TestServerBehaviour>
                             }*/
                             SendMessageToClients(message);
                             break;
-                        case Message.MessageType.login:
+                        case Message.MessageType.userLogin:
                             responder.HandleLogin(Sender, stream);
                             break;
                         case Message.MessageType.askLobbyList:

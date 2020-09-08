@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class MessageLoginResponse : Message
 {
-    public override MessageType Type => MessageType.login;
+    public override MessageType Type => MessageType.userLogin;
     public TestPlayerManager.LoginResult result;
     
     public MessageLoginResponse()

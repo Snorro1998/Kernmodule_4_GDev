@@ -204,7 +204,7 @@ public class TestServerBehaviour : V2Singleton<TestServerBehaviour>
                             }*/
                             SendMessageToClients(message);
                             break;
-                        case Message.MessageType.login:
+                        case Message.MessageType.userLogin:
                             responder.HandleLogin(Sender, stream);
                             break;
                         case Message.MessageType.askLobbyList:
