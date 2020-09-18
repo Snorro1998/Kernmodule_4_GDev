@@ -6,6 +6,10 @@ using Unity.Networking.Transport;
 [System.Serializable]
 public class Lobby
 {
+    //monsterdata
+    public byte[] monsterImgData;
+    public string monsterName;
+
     public string lobbyName = "Naamloos";
     public int gameID = -1;
     public enum State
@@ -124,6 +128,7 @@ public class Lobby
 
     private void InitTurnOrderList()
     {
+        turnOrder = new List<Character>();
         //kopieert playerlijst naar orderlijst
         foreach (SinglePlayer s in allPlayers)
         {
@@ -146,15 +151,36 @@ public class Lobby
     public void StartNewGame()
     {
         Debug.Log("startNewGame");
+        //allMonsters.Add(monster1);
+        //aliveMonsters.Add(monster1);
+
+        //InitTurnOrderList();
+        state = State.inGame;
+        SendToAll(new MessageText("Spel wordt gestart"));
+        InitRoom();
+        //UpdateRoomInfo();
+        //MessageStartGame mess = new MessageStartGame();
+        //SendToAll(new MessageStartGame());
+        /*NextTurn();*/
+    }
+
+    public void SendRoomInfo()
+    {
+        TestServerBehaviour.Instance.responder.SendImageToAllLobbyMembers(monsterImgData, this);
+        //URLLoader.Instance.GetRandomImageForLobby(this);
+        //stuur monsterafbeelding
+        //stuur monsternaam
+        //stuur playerlijst
+        //stuur playerhps
+    }
+
+    public void InitRoom()
+    {
         allMonsters.Add(monster1);
         aliveMonsters.Add(monster1);
-
         InitTurnOrderList();
-        state = State.inGame;
-        MessageStartGame mess = new MessageStartGame();
-        SendToAll(new MessageStartGame());
-        SendToAll(new MessageText("Spel wordt gestart"));
-        NextTurn();
+        //URLLoader.Instance.GetRandomImageForLobby(this);
+        //get image and its name from urlloader
     }
 
     public void MonsterTurn()

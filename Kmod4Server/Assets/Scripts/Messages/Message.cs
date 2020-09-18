@@ -21,7 +21,9 @@ public abstract class Message
         startLobby,
         gameGiveTurn,
         gameAttack,
-        imageSend
+        imageSend,
+        requestLobbyLeave,
+        responseLobbyLeave
     }
 
     public virtual void Sending(ref DataStreamWriter writer)
@@ -34,26 +36,3 @@ public abstract class Message
 
     }
 }
-/*
-public abstract class Message
-{
-    public abstract MessageType Type { get; }
-
-    public enum MessageType
-    {
-        invalid = 0,
-        none,
-        textMessage
-    }
-
-    public virtual void Sending(ref DataStreamWriter writer)
-    {
-        writer.WriteUInt((uint)Type);
-    }
-
-    public virtual void Receiving(ref DataStreamReader reader)
-    {
-
-    }
-}
-*/

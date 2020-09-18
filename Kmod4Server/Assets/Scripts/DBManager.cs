@@ -8,11 +8,12 @@ public static class DBManager
     public static readonly string dbBaseUrl = "https://studenthome.hku.nl/~tjaard.vanverseveld/content/vakken/jaar2/kernmodule4gdev/";
     public static readonly string dbCreds = "servername=localhost&username=tjaardvanverseveld&password=waiQuoh0Th&database=tjaardvanverseveld";
     public static string response;
-    public static Texture text = null;
+    //public static Texture text = null;
     public static byte[] imgData;
 
     public static IEnumerator OpenImage(string page)
     {
+        imgData = null;
         UnityWebRequest request = UnityWebRequestTexture.GetTexture(page);
         yield return request.SendWebRequest();
         if (request.isNetworkError || request.isHttpError)
@@ -22,7 +23,7 @@ public static class DBManager
         else
         {
             imgData = request.downloadHandler.data;
-            text = ((DownloadHandlerTexture)request.downloadHandler).texture;
+            //text = ((DownloadHandlerTexture)request.downloadHandler).texture;
         }
     }
 
@@ -41,7 +42,7 @@ public static class DBManager
 
     public static IEnumerator OpenURL(string page)
     {
-        Debug.Log(page);
+        //Debug.Log(page);
         var request = UnityWebRequest.Get(page);
         {
             yield return request.SendWebRequest();

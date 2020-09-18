@@ -12,150 +12,128 @@ using UnityEngine.UI;
 public class URLLoader : V2Singleton<URLLoader>
 {
     public Image img;
-    byte[] imgData;
-    string imgDownloadURL;
-
-    bool updateBool = false;
-    int currentIndex = 0;
-
-    System.Random rand = new System.Random();
-
-    private static string baseUrl = "https://e621.net/posts?tags=solo+order%3Arandom+rating%3Asafe";
-    private static string normalURL = "https://e621.net/posts?tags=solo+rating%3Asafe+order%3Arandom";
-    private static string nsfwURL =   "https://e621.net/posts?tags=solo+order%3Arandom";
-    public Queue<int> postNumbers = new Queue<int>();
+    public byte[] imgData;
 
     public enum SearchMode
     {
-        all,
         sfwOnly,
-        nsfwOnly
+        nsfwOnly,
+        allResults
     }
 
-    private SearchMode searchMode = SearchMode.nsfwOnly;
+    public SearchMode searchMode = SearchMode.nsfwOnly;
+
+    //System.Random rand = new System.Random();
+    public MonsterImageWebsiteE621 FirstSite;// = new MonsterImageWebsiteE621(new List<string>);
 
     protected override void Awake()
     {
         base.Awake();
+        FirstSite = new MonsterImageWebsiteE621 (
+            new List<string>() {"solo", "looking_at_viewer"},
+            new List<string>() {"solo", "looking_at_viewer", "knot" }
+        );
     }
 
-    public void UpdateTexture(byte[] imgDat)
+    /// <summary>
+    /// Opent de eerstvolgende opgeslagen weblink uit een monsterimagewebsite-object en downloadt de bijbehorende afbeelding en tekst.
+    /// </summary>
+    /// <param name="site"></param>
+    /// <returns></returns>
+    public IEnumerator GetImage(MonsterImageWebsite site, MonsterImageWebsite.ImageMode mode)
     {
-        imgData = imgDat;
-        TestServerBehaviour.Instance.responder.SendImageToAll(imgDat);
-        //TestServerBehaviour.Instance.responder.SendImageToAll(imgDat);
-        
-        imgData = imgDat;
-        //Debug.Log("OpenImageRoutine");
-        Texture2D txt = new Texture2D(2, 2);
-        txt.LoadImage(imgData);
-
-        Sprite s = Sprite.Create(txt, new Rect(0.0f, 0.0f, txt.width, txt.height), new Vector2(0.5f, 0.5f), 100.0f);
-        img.sprite = s;
-    }
-
-    public IEnumerator OpenImage(string url)
-    {
-        yield return StartCoroutine(DBManager.OpenImage(url));
-        if (DBManager.text != null)
+        string imagePage = site.GetImagePage(mode);
+        Debug.Log("Opent de pagina: " + imagePage);
+        yield return StartCoroutine(DBManager.OpenURL(imagePage));
+        if (DBManager.response != null)
         {
-            UpdateTexture(DBManager.imgData);
-        }
-    }
-
-    private void GetPostNumbersFromE621Search(ref string fileContent)
-    {
-        Regex regex = new Regex(@"ID: *[0-9]*");
-        MatchCollection matches = regex.Matches(fileContent);
-
-        if (matches.Count > 0)
-        {
-            for (int i = 0; i < matches.Count; i++)
+            GetSpeciesTags(DBManager.response);
+            string imgLink = site.FetchImageDownloadLink(DBManager.response);
+            if (imgLink == "")
             {
-                // het fucking werkt gewoon
-                string ss = matches[i].Value.Substring(4, matches[i].Value.Length - 4);
-                int j = -1;
-                int.TryParse(ss, out j);
-                postNumbers.Enqueue(j);
+                Debug.LogError("Kan geen downloadlink van de afbeelding vinden!");
+            }
+            else
+            {
+                Debug.Log("Downloadlink afbeelding = " + imgLink);
+                yield return StartCoroutine(DBManager.OpenImage(imgLink));
+                if (DBManager.imgData != null)
+                {
+                    imgData = DBManager.imgData;
+                    TestServerBehaviour.Instance.responder.SendImageToAll(imgData);
+                }
             }
         }
-    }
-
-    public IEnumerator GetSearchResults()
-    {
-        yield return StartCoroutine(DBManager.OpenURL(normalURL));
-        if (DBManager.response != "")
+        else
         {
-            GetPostNumbersFromE621Search(ref DBManager.response);
+            Debug.LogError("Kan de pagina niet openen!");
         }
     }
 
     /// <summary>
-    /// Zoekt de downloadlink van de afbeelding op en opent hem
+    /// Voert een zoekopdracht uit voor een monsterimagewebsite-object en slaat de resulterende weblinks hierin op.
     /// </summary>
-    /// <param name="url"></param>
+    /// <param name="site"></param>
     /// <returns></returns>
-    private IEnumerator GetContentFromRandomPost(string url)
+    IEnumerator initImageWebsite(MonsterImageWebsite site)
     {
-        imgDownloadURL = "";
-        yield return StartCoroutine(DBManager.OpenURL(url));
-        if (DBManager.response != "")
+        Debug.Log("initImageWebsite eerste start");
+        string searchHTML = site.URL_SEARCH_SFW;
+        yield return StartCoroutine(DBManager.OpenURL(searchHTML));
+        if (DBManager.response != null)
         {
-            string s = DBManager.response;
-            DBManager.response = "";
+            site.FetchSearchResults(DBManager.response, false);
+        }
+        Debug.Log("initImageWebsite eerste klaar");
+        
+        yield return new WaitForSeconds(5);
+        Debug.Log("initImageWebsite tweede start");
+        searchHTML = site.URL_SEARCH_NSFW;
+        yield return StartCoroutine(DBManager.OpenURL(searchHTML));
+        if (DBManager.response != null)
+        {
+            site.FetchSearchResults(DBManager.response, true);
+        }
+        Debug.Log("initImageWebsite tweede klaar");
 
-            int downloadTagStartIndex = s.IndexOf("<div id=\"image-download-link\">");
-            if (downloadTagStartIndex != -1)
+    }
+
+    private void GetSpeciesTags(string html)
+    {
+        int j = 0;
+        int findStringBeginIndex = html.IndexOf("<ul class=\"species-tag-list\">", j);
+        
+        if (findStringBeginIndex != -1)
+        {
+            int findStringEndIndex = html.IndexOf("</ul>", findStringBeginIndex);
+            string s = html.Substring(findStringBeginIndex, findStringEndIndex - findStringBeginIndex);
+            GetTagsFromURL(s);
+        }
+    }
+
+    private void GetTagsFromURL(string html)
+    {
+        int j = 0;
+        for (int i = 0; i < 1000; i++)
+        {
+            int findStringBeginIndex = html.IndexOf("<a rel=\"nofollow\" class=\"search-tag\"", j);
+            if (findStringBeginIndex == -1)
             {
-                int linkStartIndex = s.IndexOf("href=", downloadTagStartIndex);
-                if (linkStartIndex != -1)
-                {
-                    int nQuotes = 0;
-                    int endPos = -1;
-                    for (int i = linkStartIndex; i < linkStartIndex + 200; i++)
-                    {
-                        if (s[i] == '"')
-                        {
-                            nQuotes++;
-                        }
-                        if (nQuotes == 2)
-                        {
-                            endPos = i;
-                            break;
-                        }
-                    }
-                    if (endPos != -1)
-                    {
-                        imgDownloadURL = s.Substring(linkStartIndex + 6, endPos - linkStartIndex - 6);
-                        StartCoroutine(OpenImage(imgDownloadURL));
-                        //Debug.Log("Downloadlink = " + imgDownloadURL);
-                    }
-                }
+                break;
+            }
+            else
+            {
+                int findStringEndIndex = html.IndexOf("</a>", findStringBeginIndex);
+                findStringBeginIndex = html.LastIndexOf(">", findStringEndIndex) + 1;
+                string ss = html.Substring(findStringBeginIndex, findStringEndIndex - findStringBeginIndex);
+                Debug.Log("tag" + i + ": " + ss);
+                j = findStringBeginIndex;
             }
         }
     }
 
-
-    private void OpenRandomPost()
-    {
-        int postID = rand.Next(10, 2000000);
-        if (postNumbers.Count > 0)
-        {
-            postID = postNumbers.Dequeue();
-            postNumbers.Enqueue(postID);
-        }
-        string s = "https://e621.net/posts/" + postID.ToString();
-        StartCoroutine(GetContentFromRandomPost(s));
-    }
-
-    public void GetImage()
-    {
-        OpenRandomPost();
-        //StartCoroutine(OpenImage("https://studenthome.hku.nl/~tjaard.vanverseveld/content/images/rollercoaster_tycoon.jpg"));
-    }
-
     private void Start()
-    {
-        StartCoroutine(GetSearchResults());
+    {   
+        StartCoroutine(initImageWebsite(FirstSite));
     }
 }

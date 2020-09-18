@@ -7,8 +7,8 @@ using Unity.Networking.Transport;
 
 public class TestClientBehaviour : V2Singleton<TestClientBehaviour>
 {
-    private static ushort networkPort = 9000;
-    private static float lobbyListUpdateInterval = 10;
+    private static readonly ushort NETWORK_PORT = 9000;
+    private static readonly float LOBBY_LIST_UPDATE_INTERVAL = 10;
 
     public NetworkDriver networkDriver;
     public NetworkConnection networkConnection;
@@ -49,7 +49,7 @@ public class TestClientBehaviour : V2Singleton<TestClientBehaviour>
         {
             var message = new MessageAskLobbies();
             MessageManager.SendMessage(networkDriver, message, networkConnection);
-            yield return new WaitForSeconds(lobbyListUpdateInterval);
+            yield return new WaitForSeconds(LOBBY_LIST_UPDATE_INTERVAL);
         }  
     }
 
@@ -107,6 +107,12 @@ public class TestClientBehaviour : V2Singleton<TestClientBehaviour>
         MessageManager.SendMessage(networkDriver, message, networkConnection);
     }
 
+    public void RequestLobbyLeave()
+    {
+        var message = new MessageRequestLobbyLeave();
+        MessageManager.SendMessage(networkDriver, message, networkConnection);
+    }
+
     public void RegisterToServer(NativeString64 userName, NativeString64 password)
     {
         var message = new MessageLogin(userName, password, 1);
@@ -128,6 +134,12 @@ public class TestClientBehaviour : V2Singleton<TestClientBehaviour>
         MessageManager.SendMessage(networkDriver, message, networkConnection);
     }
 
+    public void LeaveLobby()
+    {
+        ChangeGameState(GameState.lobbyList);
+        lobbyID = -1;
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -136,15 +148,31 @@ public class TestClientBehaviour : V2Singleton<TestClientBehaviour>
 
     void Start()
     {
+        ClientEvents.Instance.onLobbyStartEnter += startLobby;
+        //ClientEvents.Instance.onImageSendEnter += ImageReceive;
+
         chatManager = ChatManager.Instance;
         chatManager.SendMessageToChat(globals.LogMessages["clientStarting"]);
         networkDriver = NetworkDriver.Create();
         networkConnection = default(NetworkConnection);
 
         var endpoint = NetworkEndPoint.LoopbackIpv4;
-        endpoint.Port = networkPort;
+        endpoint.Port = NETWORK_PORT;
         networkConnection = networkDriver.Connect(endpoint);
     }
+
+    public void startLobby()
+    {
+        Debug.Log("Startlobby");
+        chatManager.SendMessageToChat("Het spel wordt gestart");
+        ChangeGameState(GameState.game);
+        //throw new NotImplementedException();
+    }
+    /*
+    private void ImageReceive(string a)
+    {
+        responder.ImageUpdate(networkConnection, reader);
+    }*/
 
     public void OnDestroy()
     {
@@ -208,9 +236,8 @@ public class TestClientBehaviour : V2Singleton<TestClientBehaviour>
                         //HandleJoinLobbyResponse(networkConnection, reader);
                         break;
                     case Message.MessageType.startLobby:
-                        Debug.Log("Startlobby");
-                        chatManager.SendMessageToChat("Het spel wordt gestart");
-                        ChangeGameState(GameState.game);
+                        ClientEvents.Instance.StartEvent(ClientEvents.Instance.onLobbyStartEnter);
+                        //startLobby();
                         break;
                     case Message.MessageType.gameGiveTurn:
                         Debug.Log("Krijgt beurt");
@@ -218,7 +245,11 @@ public class TestClientBehaviour : V2Singleton<TestClientBehaviour>
                         break;
                     case Message.MessageType.imageSend:
                         //Debug.Log("Ontvangt een afbeelding van de server");
+                        //ClientEvents.Instance.ImageSendEnter(networkConnection, reader);
                         responder.ImageUpdate(networkConnection, reader);
+                        break;
+                    case Message.MessageType.responseLobbyLeave:
+                        LeaveLobby();
                         break;
                 }
             }

@@ -66,6 +66,24 @@ public class TestPlayerManager : MonoBehaviour
         success
     }
 
+    public void PlayerLeaveLobby(NetworkConnection nw)
+    {
+        for (int i = 0; i < newOnlinePlayers.Count; i++)
+        {
+            var player = newOnlinePlayers[i];
+            if (player.connection == nw)
+            {
+                if (player.lobbyID != -1)
+                {
+                    TestServerBehaviour.Instance.lobbies[player.lobbyID].PlayerLeave(player.player.userName);
+                    //TestServerBehaviour.Instance.lobbies[player.lobbyID].playerNames.Remove(player.player.userName);
+                    //TODO laat anderen in lobby weten dat hij uitlogt
+                }
+                return;
+            }
+        }
+    }
+
     public void LogOutPlayer(NetworkConnection nw)
     {
         for (int i = 0; i < newOnlinePlayers.Count; i++)

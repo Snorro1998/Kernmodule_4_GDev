@@ -18,27 +18,21 @@ public class ServerResponder
 
     public void SendImageToAll(byte[] imgData)
     {
-        //byte[] testByte = new byte[] { 0, 1, 2, 3, 4, 5 };
-        //int maxBytesPerMessage = 10;
+        // Aantal bericht dat nodig is om de afbeelding te versturen
         int nMessages = Mathf.CeilToInt((float)imgData.Length / (float)MAX_BYTES_PER_MESSAGE_FOR_IMAGES);
-        //Debug.Log("testbytelength = " + testByte.Length + ", maxpermess = " + MAX_BYTES_PER_MESSAGE_FOR_IMAGES + ", nmess = " + nMessages);
 
         for (int i = 0; i < nMessages; i++)
         {
             List<byte> dataToSend = new List<byte>();
             int dataSize = MAX_BYTES_PER_MESSAGE_FOR_IMAGES;
-            // int baseIndex = i * MAX_BYTES_PER_MESSAGE_FOR_IMAGES;
-            
 
             for (int j = 0; j < MAX_BYTES_PER_MESSAGE_FOR_IMAGES; j++)
             {
                 if (i * MAX_BYTES_PER_MESSAGE_FOR_IMAGES + j >= imgData.Length)
                 {
-                    //Debug.Log("eindbericht heeft een lengte van " + j);
                     dataSize = j;
                     break;
                 }
-                //Debug.Log("elem = " + testByte[i * MAX_BYTES_PER_MESSAGE_FOR_IMAGES + j]);
                 dataToSend.Add(imgData[i * MAX_BYTES_PER_MESSAGE_FOR_IMAGES + j]);
             }
             // tijdelijke lijst omzetten zodat je eindelijk een geknipt deel van de data hebt.
@@ -49,17 +43,18 @@ public class ServerResponder
             }
 
             MessageImageSend.DataType dat = MessageImageSend.DataType.singlething;
-            
+
             if (i == 0)
             {
-                if (i == nMessages - 1)
+                dat = (i == nMessages - 1) ? MessageImageSend.DataType.singlething : MessageImageSend.DataType.start;
+                /*if (i == nMessages - 1)
                 {
                     dat = MessageImageSend.DataType.singlething;
                 }
                 else
                 {
                     dat = MessageImageSend.DataType.start;
-                }
+                }*/
             }
             else if (i == nMessages - 1)
             {
@@ -77,6 +72,57 @@ public class ServerResponder
             }
         }
     }
+
+
+    public void SendImageToAllLobbyMembers(byte[] imgData, Lobby lob)
+    {
+        // Aantal bericht dat nodig is om de afbeelding te versturen
+        int nMessages = Mathf.CeilToInt((float)imgData.Length / (float)MAX_BYTES_PER_MESSAGE_FOR_IMAGES);
+
+        for (int i = 0; i < nMessages; i++)
+        {
+            List<byte> dataToSend = new List<byte>();
+            int dataSize = MAX_BYTES_PER_MESSAGE_FOR_IMAGES;
+
+            for (int j = 0; j < MAX_BYTES_PER_MESSAGE_FOR_IMAGES; j++)
+            {
+                if (i * MAX_BYTES_PER_MESSAGE_FOR_IMAGES + j >= imgData.Length)
+                {
+                    dataSize = j;
+                    break;
+                }
+                dataToSend.Add(imgData[i * MAX_BYTES_PER_MESSAGE_FOR_IMAGES + j]);
+            }
+            // tijdelijke lijst omzetten zodat je eindelijk een geknipt deel van de data hebt.
+            byte[] sendData = new byte[dataSize];
+            for (int k = 0; k < dataSize; k++)
+            {
+                sendData[k] = dataToSend[k];
+            }
+
+            MessageImageSend.DataType dat = MessageImageSend.DataType.singlething;
+
+            if (i == 0)
+            {
+                dat = (i == nMessages - 1) ? MessageImageSend.DataType.singlething : MessageImageSend.DataType.start;
+            }
+            else if (i == nMessages - 1)
+            {
+                dat = MessageImageSend.DataType.end;
+            }
+            else
+            {
+                dat = MessageImageSend.DataType.middle;
+            }
+
+            MessageImageSend message = new MessageImageSend(sendData, (uint)(sendData.Length), dat);
+            foreach (var player in lob.allPlayers)
+            {
+                MessageManager.SendMessage(server.networkDriver, message, player.connection);
+            }
+        }
+    }
+
 
     /// <summary>
     /// Verwerkt inkomende inloggegevens en geeft hierop een antwoord
@@ -141,6 +187,14 @@ public class ServerResponder
 
         MessageJoinLobby response = new MessageJoinLobby(i, "", result);
         //MessageLobbyInfo response2 = new MessageLobbyInfo();
+        MessageManager.SendMessage(server.networkDriver, response, nw);
+    }
+
+    public void HandleLobbyLeaveRequest(NetworkConnection nw, DataStreamReader reader)
+    {
+        Debug.Log("server ontvangt verzoek van client om lobby te verlaten");
+        server.playerManager.PlayerLeaveLobby(nw);
+        var response = new MessageResponseLobbyLeave();
         MessageManager.SendMessage(server.networkDriver, response, nw);
     }
 }

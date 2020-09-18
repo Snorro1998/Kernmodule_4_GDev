@@ -11,9 +11,9 @@ using UnityEngine.UI;
 
 public class TestServerBehaviour : V2Singleton<TestServerBehaviour>
 {
-    private static readonly ushort networkPort = 9000;
-    // Moet in elk geval kleiner zijn dan 30 om te voorkomen dat de verbinding automatisch verbroken wordt
-    private static readonly float pingInterval = 5;
+    private static readonly ushort NETWORK_PORT = 9000;
+    // Het pinginterval moet in elk geval kleiner dan 30 zijn om te voorkomen dat de verbinding tussen client en server automatisch verbroken wordt.
+    private static readonly float PING_INTERVAL = 5;
     private bool pingCoroutineRunning = false;
 
     public NetworkDriver networkDriver;
@@ -25,6 +25,7 @@ public class TestServerBehaviour : V2Singleton<TestServerBehaviour>
     public List<Lobby> lobbies = new List<Lobby>();
 
     public bool GetImage = false;
+    public bool NSFW = false;
     public Texture2D testTexture;
 
     private Lobby GetPlayerLobby(NetworkConnection nw)
@@ -177,7 +178,7 @@ public class TestServerBehaviour : V2Singleton<TestServerBehaviour>
         pingCoroutineRunning = true;
         while (networkConnections.Length > 0)
         {
-            yield return new WaitForSeconds(pingInterval);
+            yield return new WaitForSeconds(PING_INTERVAL);
             MessageAlive msgAlive = new MessageAlive();
             for (int i = 0; i < networkConnections.Length; i++)
             {
@@ -192,10 +193,10 @@ public class TestServerBehaviour : V2Singleton<TestServerBehaviour>
         ChatManager.Instance.SendMessageToChat("De server wordt gestart");
         networkDriver = NetworkDriver.Create();
         var endpoint = NetworkEndPoint.AnyIpv4;
-        endpoint.Port = networkPort;
+        endpoint.Port = NETWORK_PORT;
         if (networkDriver.Bind(endpoint) != 0)
         {
-            ChatManager.Instance.SendMessageToChat("De server kon zichzelf niet binden aan de poort " + networkPort);
+            ChatManager.Instance.SendMessageToChat("De server kon zichzelf niet binden aan de poort " + NETWORK_PORT);
         }
         else
         {
@@ -225,6 +226,8 @@ public class TestServerBehaviour : V2Singleton<TestServerBehaviour>
         lobbies.Add(lob);
         lobbies.Add(lob2);
         lobbies.Add(lob3);
+
+
     }
 
     void Start()
@@ -249,7 +252,8 @@ public class TestServerBehaviour : V2Singleton<TestServerBehaviour>
         {
             GetImage = false;
             //responder.SendImageToAll(testTexture.GetRawTextureData());
-            URLLoader.Instance.GetImage();
+            MonsterImageWebsite.ImageMode mode = NSFW ? MonsterImageWebsite.ImageMode.nsfwOnly : MonsterImageWebsite.ImageMode.sfwOnly;
+            URLLoader.Instance.StartCoroutine(URLLoader.Instance.GetImage(URLLoader.Instance.FirstSite, mode));
             //responder.SendImageToAll(null);
         }
 
@@ -305,17 +309,10 @@ public class TestServerBehaviour : V2Singleton<TestServerBehaviour>
                         case Message.MessageType.gameAttack:
                             PlayerAttacks(Sender);
                             break;
+                        case Message.MessageType.requestLobbyLeave:
+                            responder.HandleLobbyLeaveRequest(Sender, stream);
+                            break;
                     }
-                    /*
-                    uint number = stream.ReadUInt();
-
-                    ChatManager.Instance.SendMessageToChat("Got " + number + " from the Client adding + 2 to it.");
-                    number += 2;
-
-                    var writer = networkDriver.BeginSend(NetworkPipeline.Null, networkConnections[i]);
-                    writer.WriteUInt(number);
-                    networkDriver.EndSend(writer);
-                    */
                 }
                 else if (cmd == NetworkEvent.Type.Disconnect)
                 {

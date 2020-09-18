@@ -21,7 +21,9 @@ public abstract class Message
         startLobby,
         gameGiveTurn,
         gameAttack,
-        imageSend
+        imageSend,
+        requestLobbyLeave,
+        responseLobbyLeave
     }
 
     public virtual void Sending(ref DataStreamWriter writer)
