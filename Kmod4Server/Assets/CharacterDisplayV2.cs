@@ -46,6 +46,7 @@ public class CharacterDisplayV2 : MonoBehaviour
             }
         }
         //TestBattleSystem.Instance.NextTurn();
+        GameManager.Instance.NextTurn();
         yield return 0;
     }
 
@@ -133,6 +134,7 @@ public class CharacterDisplayV2 : MonoBehaviour
     private void Start()
     {
         nameTextObject.text = character.charName;        
+        hpBar.value = Mathf.InverseLerp(0, character.statMaxHealth, character.currentHp);
         UpdateHPBarColor();
         /*
         CreateTargetButton();

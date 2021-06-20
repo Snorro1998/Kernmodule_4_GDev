@@ -15,6 +15,9 @@ static class LoginLogoutFunctions
     {
         ServerBehaviour server = sender as ServerBehaviour;
         var message = MessageManager.ReadMessage<MessageLoginRequest>(stream) as MessageLoginRequest;
+        server.OnloginRequestFunction(message.name, message.password, connection);
+        return;
+
         DebugMessages.PrintDebugMessage(DebugMessages.MessageTypes.CLIENT_LOGIN_REQUEST, message.name, message.password);
         //TODO gegevenscheck
         var result = PlayerManager.Instance.PlayerIsLoggedIn(message.name, connection) == true ? MessageLoginResponse.LoginResult.ALREADY_LOGGED_IN : MessageLoginResponse.LoginResult.SUCCES;

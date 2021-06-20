@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bomb : ConsumableItem
+[System.Serializable]
+class Grenade : ConsumableItem
 {
     public override BattleActions Type => BattleActions.DAMAGE;
 
-    public Bomb()
+    public Grenade()
     {
-        itemName = "Bomb";
-        effect = 8;
+        itemName = "Grenade";
+        effect = 4;
     }
 
     protected override void UseFunc(Character target, Character user)

@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Grenade : ConsumableItem
+[System.Serializable]
+public class SkillSlash : ConsumableItem
 {
     public override BattleActions Type => BattleActions.DAMAGE;
 
-    public Grenade()
+    public SkillSlash()
     {
-        itemName = "Grenade";
-        effect = 4;
+        itemName = "Slash";
+        dontDecrease = true;
+        effect = 2;
     }
 
     protected override void UseFunc(Character target, Character user)

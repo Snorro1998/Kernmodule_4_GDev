@@ -133,6 +133,7 @@ public class CharacterDisplayV2 : MonoBehaviour
     private void Start()
     {
         nameTextObject.text = character.charName;        
+        hpBar.value = Mathf.InverseLerp(0, character.statMaxHealth, character.currentHp);
         UpdateHPBarColor();
         /*
         CreateTargetButton();

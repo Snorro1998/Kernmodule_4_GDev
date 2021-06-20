@@ -9,6 +9,7 @@ public enum ActiveBattlePanel
     PANEL_START,
     PANEL_ITEMS,
     PANEL_TARGETS,
+    PANEL_SKILLS
 }
 
 public class BattleUIManager : Singleton<BattleUIManager>
@@ -27,6 +28,7 @@ public class BattleUIManager : Singleton<BattleUIManager>
     public GameObject mainPanelStart;
     public GameObject mainPanelItem;
     public GameObject mainPanelTarget;
+    public GameObject mainPanelSkill;
 
     //Start panel
     public Button panelStartAttackButton;
@@ -38,6 +40,9 @@ public class BattleUIManager : Singleton<BattleUIManager>
     //Target panel
     public Button panelTargetBackButton;
     public GameObject panelTargetTargetsCollection;
+
+    //Skill panel
+    public Button panelSkillBackButton;
 
 
     /// <summary>
@@ -139,16 +144,19 @@ public class BattleUIManager : Singleton<BattleUIManager>
 
     private void InitDict()
     {
-        panels.Add( ActiveBattlePanel.PANEL_START, mainPanelStart);
-        panels.Add( ActiveBattlePanel.PANEL_ITEMS, mainPanelItem);
-        panels.Add( ActiveBattlePanel.PANEL_TARGETS, mainPanelTarget);
+        panels.Add(ActiveBattlePanel.PANEL_START, mainPanelStart);
+        panels.Add(ActiveBattlePanel.PANEL_ITEMS, mainPanelItem);
+        panels.Add(ActiveBattlePanel.PANEL_TARGETS, mainPanelTarget);
+        panels.Add(ActiveBattlePanel.PANEL_SKILLS, mainPanelSkill);
     }
 
     private void Start()
     {
         InitDict();
+        panelStartAttackButton.onClick.AddListener(delegate { ChangePanel(ActiveBattlePanel.PANEL_SKILLS); });
         panelStartItemButton.onClick.AddListener(delegate { ChangePanel(ActiveBattlePanel.PANEL_ITEMS); });
         panelItemBackButton.onClick.AddListener(delegate { ChangePanel(ActiveBattlePanel.PANEL_START); });
         panelTargetBackButton.onClick.AddListener(delegate { ChangePanel(ActiveBattlePanel.PANEL_START); });
+        panelSkillBackButton.onClick.AddListener(delegate { ChangePanel(ActiveBattlePanel.PANEL_START); });
     }
 }

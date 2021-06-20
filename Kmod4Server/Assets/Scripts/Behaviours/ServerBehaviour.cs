@@ -30,6 +30,40 @@ public class ServerBehaviour : Singleton<ServerBehaviour>
         { GameEvent.GAME_USE_ITEM, OnItemUse}
     };
     
+    public void OnloginRequestFunction(string username, string password, NetworkConnection connection)
+    {
+        StartCoroutine(LoginRequester(username, password, connection));
+    }
+
+    IEnumerator LoginRequester(string username, string password, NetworkConnection connection)
+    {
+        yield return StartCoroutine(DBManager.OpenURL("player_login", "username=" + username + "", "password=" + password));
+        var result = MessageLoginResponse.LoginResult.UNKNOWN_USERNAME;
+        if (DBManager.response != null)
+        {
+            var str = DBManager.response;
+            Debug.Log(str);
+            if (str.Contains("SUCCES")) result = MessageLoginResponse.LoginResult.SUCCES;
+            else if (str.Contains("ERROR_USERNAME_WRONG_PASSWORD")) result = MessageLoginResponse.LoginResult.INVALID_PASSWORD;
+            else if (str.Contains("ERROR_USERNAME_UNKNOWN")) result = MessageLoginResponse.LoginResult.UNKNOWN_USERNAME;
+        }
+
+        DebugMessages.PrintDebugMessage(DebugMessages.MessageTypes.CLIENT_LOGIN_REQUEST, username, password);
+        //TODO gegevenscheck
+        if (result == MessageLoginResponse.LoginResult.SUCCES) result = PlayerManager.Instance.PlayerIsLoggedIn(username, connection) == true ? MessageLoginResponse.LoginResult.ALREADY_LOGGED_IN : MessageLoginResponse.LoginResult.SUCCES;
+        //if (!nameInDb) result = MessageLoginResponse.LoginResult.UNKNOWN_USERNAME;
+        //TODO niet weigeren als het spel al is gestart
+        if (GameManager.Instance.gameStarted) result = MessageLoginResponse.LoginResult.GAME_STARTED;
+
+        if (result == MessageLoginResponse.LoginResult.SUCCES)
+        {
+            PlayerManager.Instance.LoginPlayer(username, connection);
+        }
+
+        var response = new MessageLoginResponse(result);
+        MessageManager.SendMessage(networkDriver, response, connection);
+    }
+
 
     /// <summary>
     /// Stuurt een bericht naar iedere client die verbonden is met de server.

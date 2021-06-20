@@ -8,17 +8,26 @@ public class ItemManager : Singleton<ItemManager>
     public List<ConsumableItem> items = new List<ConsumableItem>();
     public GameObject itemButtonPrefab;
     public GameObject itemUIScreen;
+    private int nItems = 0;
 
     protected override void Awake()
     {
         base.Awake();
         InitItems();
+        InitSkills();
     }
 
     private void InitItems()
     {
         items.Add(new Bomb());
         items.Add(new Grenade());
+        nItems = items.Count;
+    }
+
+    private void InitSkills()
+    {
+        items.Add(new SkillSlash());
+        GiveItem("Slash", 1);
     }
 
     public ConsumableItem GetItemByName(string _itemName)
@@ -36,6 +45,7 @@ public class ItemManager : Singleton<ItemManager>
     public void UseItem(string _itemName, int _amount, string target, string user)
     {
         var item = GetItemByName(_itemName);
+        Debug.Log("item=" + item);
         if (item != null)
         {
             item.Use(_amount, GameManager.Instance.GetCharacterByName(target), GameManager.Instance.GetCharacterByName(user));
@@ -57,8 +67,16 @@ public class ItemManager : Singleton<ItemManager>
     public void GiveRandomItem()
     {
         //Debug.Log(items.Count);
-        int i = Random.Range(0, items.Count);
+        int i = Random.Range(0, nItems);
         GiveItem(items[i].itemName, 1);
+    }
+
+    public void PrintNItems()
+    {
+        foreach (var i in items)
+        {
+            Debug.Log(i.itemName + ", " + i.amount);
+        }
     }
 
     public void SendClientUseItem(string itemName, int amount, string target, string user)

@@ -8,6 +8,7 @@ public abstract class ConsumableItem
     public string itemName = "";
     public int amount = 0;
     public int effect = 1;
+    public bool dontDecrease = false;
 
     public abstract BattleActions Type { get; }
 
@@ -23,14 +24,21 @@ public abstract class ConsumableItem
 
     public void Use(int _amount, Character target, Character user)
     {
-        if (amount >= _amount)
+        if (!dontDecrease)
         {
-            amount = Mathf.Max(0, amount - _amount);
-            UseFunc(target, user);
+            if (amount >= _amount)
+            {
+                amount = Mathf.Max(0, amount - _amount);
+                UseFunc(target, user);
+            }
+            else
+            {
+                Debug.Log("Kan " + itemName + " niet gebruiken. Er is onvoldoende van");
+            }
         }
         else
         {
-            Debug.Log("Kan " + itemName + " niet gebruiken. Er is onvoldoende van");
+            UseFunc(target, user);
         }
     }
 

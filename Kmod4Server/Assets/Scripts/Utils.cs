@@ -6,6 +6,7 @@ using System.IO;
 using Unity.Networking.Transport;
 using System;
 using System.Linq;
+using System.Text;
 
 public static class Utils
 {
@@ -89,6 +90,21 @@ public static class Utils
                 var hash = md5.ComputeHash(stream);
                 return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
             }
+        }
+    }
+
+    public static string CalculateMD5ForString(string filename)
+    {
+        using (var md5 = MD5.Create())
+        {
+            //return md5.ComputeHash(System.BitConverter.GetBytes(filename));
+            return "";
+            /*
+            using (var stream = File.OpenRead(filename))
+            {
+                var hash = md5.ComputeHash(stream);
+                return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+            }*/
         }
     }
 

@@ -120,6 +120,7 @@ public class GameManager : Singleton<GameManager>
 
     private bool AllMonstersDead()
     {
+        if (allMonsters.Count == 0) return true;
         foreach (var m in allMonsters)
         {
             if (m.IsAlive()) return false;
