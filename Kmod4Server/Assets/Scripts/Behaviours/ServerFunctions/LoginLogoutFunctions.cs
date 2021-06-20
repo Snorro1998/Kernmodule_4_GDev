@@ -13,9 +13,11 @@ static class LoginLogoutFunctions
     /// <param name="connection"></param>
     public static void OnLoginRequest(DataStreamReader stream, object sender, NetworkConnection connection)
     {
+        Debug.Log("Loginrequest");
         ServerBehaviour server = sender as ServerBehaviour;
         var message = MessageManager.ReadMessage<MessageLoginRequest>(stream) as MessageLoginRequest;
         server.OnloginRequestFunction(message.name, message.password, connection);
+        /*
         return;
 
         DebugMessages.PrintDebugMessage(DebugMessages.MessageTypes.CLIENT_LOGIN_REQUEST, message.name, message.password);
@@ -31,6 +33,15 @@ static class LoginLogoutFunctions
 
         var response = new MessageLoginResponse(result);
         MessageManager.SendMessage(server.networkDriver, response, connection);
+        */
+    }
+
+    public static void OnRegisterRequest(DataStreamReader stream, object sender, NetworkConnection connection)
+    {
+        Debug.Log("Registerrequest");
+        ServerBehaviour server = sender as ServerBehaviour;
+        var message = MessageManager.ReadMessage<MessageRegisterRequest>(stream) as MessageRegisterRequest;
+        server.OnRegisterRequestFunction(message.name, message.password, connection);
     }
 
     /// <summary>

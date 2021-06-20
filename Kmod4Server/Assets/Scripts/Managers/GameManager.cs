@@ -148,6 +148,13 @@ public class GameManager : Singleton<GameManager>
         Debug.Log(currentCharacter.charName + " is aan de beurt");
         var message = new MessageGiveTurn(currentCharacter.charName, IsPlayer(currentCharacter.charName));
         ServerBehaviour.Instance.SendMessageToAllOnline(message);
+        if (!IsPlayer(currentCharacter.charName)) MonsterTurn();
+    }
+
+    public void MonsterTurn()
+    {
+        Character c = allPlayers[Random.Range(0, allPlayers.Count)];
+        ItemManager.Instance.UseItem("Slash", 1, c.charName, currentCharacter.charName);
     }
 
     public IEnumerator BattleSym()

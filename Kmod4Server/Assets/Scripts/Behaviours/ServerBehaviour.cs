@@ -11,6 +11,13 @@ using UnityEngine.UI;
 using UnityEditor;
 
 
+public enum RegisterResult
+{
+    SUCCES,
+    ERROR_ALREADY_EXISTS,
+    ERROR_DEFAULT,
+}
+
 public class ServerBehaviour : Singleton<ServerBehaviour>
 {
     public NetworkDriver networkDriver;
@@ -25,14 +32,49 @@ public class ServerBehaviour : Singleton<ServerBehaviour>
         // link game events to functions...
         { GameEvent.PING, OnPing },
         { GameEvent.LOGIN_REQUEST, LoginLogoutFunctions.OnLoginRequest},
+        { GameEvent.REGISTER_REQUEST, LoginLogoutFunctions.OnRegisterRequest},
         { GameEvent.LOGOUT_REQUEST, LoginLogoutFunctions.OnLogoutRequest},
         { GameEvent.GAME_MAZE_REVEAL_TILE, MazeFunctions.OnMazeTileClicked},
         { GameEvent.GAME_USE_ITEM, OnItemUse}
     };
-    
+
+    public void OnRegisterRequestFunction(string username, string password, NetworkConnection connection)
+    {
+        StartCoroutine(RegisterRequester(username, password, connection));
+    }
+
     public void OnloginRequestFunction(string username, string password, NetworkConnection connection)
     {
         StartCoroutine(LoginRequester(username, password, connection));
+    }
+
+    IEnumerator RegisterRequester(string username, string password, NetworkConnection connection)
+    {
+        yield return StartCoroutine(DBManager.OpenURL("player_register", "username=" + username + "", "password=" + password));
+        var result = RegisterResult.ERROR_DEFAULT;
+        yield return 0;
+        if (DBManager.response != null)
+        {
+            var str = DBManager.response;
+            if (str.Contains("ERROR_USERNAME_ALREADY_EXISTS")) result = RegisterResult.ERROR_ALREADY_EXISTS;
+            else if (str.Contains("SUCCES")) result = RegisterResult.SUCCES;
+        }
+
+        if (result == RegisterResult.SUCCES)
+        {
+            PerformLogin(username, connection, MessageLoginResponse.LoginResult.SUCCES);
+        }
+    }
+
+    private void PerformLogin(string username, NetworkConnection connection, MessageLoginResponse.LoginResult result)
+    {
+        if (result == MessageLoginResponse.LoginResult.SUCCES)
+        {
+            PlayerManager.Instance.LoginPlayer(username, connection);
+        }
+
+        var response = new MessageLoginResponse(result);
+        MessageManager.SendMessage(networkDriver, response, connection);
     }
 
     IEnumerator LoginRequester(string username, string password, NetworkConnection connection)
@@ -55,13 +97,16 @@ public class ServerBehaviour : Singleton<ServerBehaviour>
         //TODO niet weigeren als het spel al is gestart
         if (GameManager.Instance.gameStarted) result = MessageLoginResponse.LoginResult.GAME_STARTED;
 
+        PerformLogin(username, connection, result);
+        /*
         if (result == MessageLoginResponse.LoginResult.SUCCES)
         {
             PlayerManager.Instance.LoginPlayer(username, connection);
         }
 
         var response = new MessageLoginResponse(result);
-        MessageManager.SendMessage(networkDriver, response, connection);
+        MessageManager.SendMessage(networkDriver, response, connection);*/
+        yield return 0;
     }
 
 

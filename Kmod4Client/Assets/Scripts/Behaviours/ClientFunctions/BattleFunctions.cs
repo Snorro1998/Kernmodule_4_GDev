@@ -32,5 +32,6 @@ static class BattleFunctions
         Debug.Log(message.characterName + " is aan de beurt");
         if (message.characterName == ClientBehaviour.Instance.username) BattleUIManager.Instance.ShowBattleUI();
         else BattleUIManager.Instance.HideBattleUI();
+        BattleUIManager.Instance.ShowSplash(message.characterName + " is aan de beurt", 2.0f);
     }
 }

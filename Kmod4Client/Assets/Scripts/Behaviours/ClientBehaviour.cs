@@ -40,6 +40,15 @@ public class ClientBehaviour : Singleton<ClientBehaviour>
         MessageManager.SendMessage(networkDriver, message, networkConnection);
     }
 
+    public void DoRegister()
+    {
+        username = usernameField.text;
+        password = passwordField.text;
+        var message = new MessageRegisterRequest(username, password);
+        Debug.Log("Stuurt registratieverzoek");
+        MessageManager.SendMessage(networkDriver, message, networkConnection);
+    }
+
     public void DoLogout()
     {
         var message = new MessageLogoutRequest();

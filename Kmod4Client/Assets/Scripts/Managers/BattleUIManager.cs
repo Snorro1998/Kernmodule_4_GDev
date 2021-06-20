@@ -45,6 +45,8 @@ public class BattleUIManager : Singleton<BattleUIManager>
     public Button panelSkillBackButton;
 
 
+    public Text splashText;
+
     /// <summary>
     /// Werkt de targetknoppen bij.
     /// </summary>
@@ -140,6 +142,29 @@ public class BattleUIManager : Singleton<BattleUIManager>
             CharacterDisplayV2 obj = Instantiate(characterVisualPrefab, playerVisualsPanel.transform).GetComponentInChildren<CharacterDisplayV2>();
             obj.character = p;
         }
+    }
+
+    public void ShowSplash(string txt, float fadeTime)
+    {
+        StartCoroutine(ShowSplashText(txt, fadeTime));
+    }
+
+    public IEnumerator ShowSplashText(string txt, float fadeTime)
+    {
+        splashText.gameObject.SetActive(true);
+        float i = 1.0f;
+        splashText.text = txt;
+        Color col = splashText.color;
+        col.a = 1;
+        while (i > 0)
+        {
+            i -= Time.deltaTime / fadeTime;
+            col.a = i;
+            splashText.color = col;
+            yield return new WaitForEndOfFrame();
+        }
+        splashText.gameObject.SetActive(false);
+        yield return 0;
     }
 
     private void InitDict()
