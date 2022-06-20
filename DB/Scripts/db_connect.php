@@ -13,4 +13,19 @@ if ($mysqli->connect_errno) {
    exit();
 }
 
+function SetExistingSession() {
+    if (isset($_GET['session_id'])) { 
+        $sid=htmlspecialchars($_GET['session_id']);
+        session_id($sid);
+    }
+}
+
+function CheckServerID() {
+    if (isset($_SESSION["server_id"]) && $_SESSION["server_id"]!=0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 ?>
