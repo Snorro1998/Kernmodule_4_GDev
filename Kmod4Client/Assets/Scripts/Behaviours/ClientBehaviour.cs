@@ -26,9 +26,36 @@ public class ClientBehaviour : Singleton<ClientBehaviour>
     public InputField usernameField;
     public InputField passwordField;
 
+    public bool isDead = false;
+
     public void SendMessageToServer(Message message)
     {
         MessageManager.SendMessage(networkDriver, message, networkConnection);
+    }
+
+    void MCFUCKINGDEAD(MessageDead message)
+    {
+        Debug.Log("MCDEAD:" + message.characterName + "," + username + ",");
+        if (message.characterName == username)
+        {
+            isDead = true;
+            Debug.Log("YOU ARE DEAD DEAD DEAD!");
+            ScreenTransitioner.Instance.ChangeScreen(ActiveScreen.GAME_OVER_SCREEN, 0.5f, 0.5f);
+            //Debug.Log("highscores:");
+            ScreenTransitioner.Instance.ShowScores(message.scores);
+            //var splitted = message.highScores.Split(',');
+            /*
+            foreach (var score in message.scores)
+            {
+                Debug.Log(score);
+            }*/
+        }
+    }
+
+    static void OnDead(DataStreamReader stream, object sender, NetworkConnection connection)
+    {
+        var message = MessageManager.ReadMessage<MessageDead>(stream) as MessageDead;
+        ClientBehaviour.Instance.MCFUCKINGDEAD(message);
     }
 
     public void DoLogin()
@@ -70,6 +97,7 @@ public class ClientBehaviour : Singleton<ClientBehaviour>
         { GameEvent.GAME_GET_ITEM, OnItemGet},
         { GameEvent.GAME_USE_ITEM, OnItemUse },
         { GameEvent.PLAYERMANAGER_UPDATE_PLAYERS, OnPlayerUpdate},
+        { GameEvent.PLAYER_DIED, OnDead},
     };
 
     delegate void LoginFunc(object sender);

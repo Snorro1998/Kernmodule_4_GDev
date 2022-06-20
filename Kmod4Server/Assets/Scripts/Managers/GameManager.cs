@@ -99,7 +99,7 @@ public class GameManager : Singleton<GameManager>
             return null;
         }
 
-    private bool IsPlayer(string name)
+    public bool IsPlayer(string name)
     {
         foreach(var p in allPlayers)
         {
@@ -223,6 +223,8 @@ public class GameManager : Singleton<GameManager>
         if (!gameStarted)
         {
             gameStarted = true;
+            ItemManager.Instance.GiveItem("Grenade", 5);
+            ItemManager.Instance.GiveItem("Bomb", 2);
             ScreenTransitioner.Instance.ChangeScreen(ActiveScreen.GAME_MAZE_SCREEN, 1, 1);
             GotoNextMazeFloor();
         }

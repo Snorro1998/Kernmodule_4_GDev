@@ -9,6 +9,7 @@ public enum ActiveScreen
     GAME_WAIT_SCREEN,
     GAME_MAZE_SCREEN,
     GAME_BATTLE_SCREEN,
+    GAME_OVER_SCREEN,
 }
 /*
 public class AnimType
@@ -32,6 +33,9 @@ public class ScreenTransitioner : Singleton<ScreenTransitioner>
     public GameObject screenGameWait;
     public GameObject screenGameMaze;
     public GameObject screenGameBattle;
+    public GameObject screenGameOver;
+
+    public Text scoreText;
 
     static Dictionary<ActiveScreen, GameObject> screens = new Dictionary<ActiveScreen, GameObject>() { };
 
@@ -41,6 +45,7 @@ public class ScreenTransitioner : Singleton<ScreenTransitioner>
         screens.Add(ActiveScreen.GAME_WAIT_SCREEN, screenGameWait);
         screens.Add(ActiveScreen.GAME_MAZE_SCREEN, screenGameMaze);
         screens.Add(ActiveScreen.GAME_BATTLE_SCREEN, screenGameBattle);
+        screens.Add(ActiveScreen.GAME_OVER_SCREEN, screenGameOver);
     }
     /*
     public IEnumerator DoTransition(AnimType anim)
@@ -50,6 +55,38 @@ public class ScreenTransitioner : Singleton<ScreenTransitioner>
         yield return 0;
     }
     */
+
+    public void ShowScores(string[] scores)
+    {
+        string scoreString = "";
+        foreach (var score in scores)
+        {
+            Debug.Log(score);
+            
+            if (score != "")
+            {
+                var ding = score.Split(',');
+                int scorevalue = int.Parse(ding[1]);
+                string playername = ding[0];
+
+                scoreString += scorevalue;
+                scoreString += ": ";
+                scoreString += playername;
+                scoreString += "\n";
+                //int scorevalue = 0;
+                //int.TryParse(ding[0], out scorevalue);
+                /*
+                string playerName = ding[1];
+                scoreString += ding[0];// += ": " += score[1];
+                scoreString += ": ";
+                scoreString += score[1];
+                scoreString += "/n";
+                */
+            }
+        }
+
+        scoreText.text = scoreString;
+    }
 
     public void UpdateVisibleScreen(ActiveScreen screen)
     {

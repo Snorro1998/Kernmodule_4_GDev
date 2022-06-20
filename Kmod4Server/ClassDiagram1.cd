@@ -1,0 +1,298 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ConsumableItem">
+    <Position X="31.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAASAAABAAAAAAAAAAAAAAEAAAUgAAACQAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Actions\Items\ConsumableItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Bomb">
+    <Position X="29.5" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAEAAAQAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Actions\Items\ConsumableItemBomb.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Grenade">
+    <Position X="31.75" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAEAAAQAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Actions\Items\ConsumableItemGrenade.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SkillSlash">
+    <Position X="34" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAEAAAQAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Actions\Skills\SkillSlash.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientBehaviour">
+    <Position X="1.5" Y="9.5" Width="1.5" />
+    <NestedTypes>
+      <Delegate Name="ClientBehaviour.GameEventHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Scripts\Behaviours\ClientBehaviour.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="ClientBehaviour.LoginFunc" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Scripts\Behaviours\ClientBehaviour.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AQQBAxAAACIAAAAFAikAIAEAAACAAQCAAAAIAgAAAEA=</HashCode>
+      <FileName>Assets\Scripts\Behaviours\ClientBehaviour.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ServerBehaviour">
+    <Position X="3.75" Y="9.5" Width="1.5" />
+    <NestedTypes>
+      <Delegate Name="ServerBehaviour.GameEventHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Scripts\Behaviours\ServerBehaviour.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>IEQBAAAAMCIAIAAggCgCMgAAwJCQAQBKACAAAAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\Behaviours\ServerBehaviour.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Character">
+    <Position X="26" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAIACAAAAAAACAAAAIAACAAAAAAEAAAQCgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Game\Character\Character.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Monster">
+    <Position X="24.75" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Game\Character\Monster.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Player">
+    <Position X="27" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Game\Character\Player.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MazeGenerator">
+    <Position X="21.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAiEIAACAQAIAAAAAgAAAAQgkAAAAAAAiCQQAAAEA=</HashCode>
+      <FileName>Assets\Scripts\Game\Maze\MazeGenerator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BattleUIManager">
+    <Position X="6" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EABAAAiAAOCQAABABIAAABAAQEAABAAAgAABASEAAAA=</HashCode>
+      <FileName>Assets\Scripts\Managers\BattleUIManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameManager">
+    <Position X="12.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAIEIBICgAAACIQESgQAAAAAkAAhACEQsAAIA=</HashCode>
+      <FileName>Assets\Scripts\Managers\GameManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ItemManager">
+    <Position X="17.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAQEAAACIAAABYoAAAAAAAAAAAAAQAAAAQAgBEA=</HashCode>
+      <FileName>Assets\Scripts\Managers\ItemManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerManager">
+    <Position X="19.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAAAAAAAAAAAAAAAAIAAgAMAAAABAAIAA=</HashCode>
+      <FileName>Assets\Scripts\Managers\PlayerManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MessageBattleStart">
+    <Position X="26.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAAAAAAAAQAAAAAAAAAAQAAQAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Messages\Battle\MessageBattleStart.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MessageBattleWin">
+    <Position X="31.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAQAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Messages\Battle\MessageBattleWin.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MessageGiveItem">
+    <Position X="35.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAAAAAQAAAAAgAAAAQAAQAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Messages\Battle\MessageGiveItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MessageGiveTurn">
+    <Position X="2" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAIAAQAAAAEAAAAAQAAQAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Messages\Battle\MessageGiveTurn.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MessageUseItem">
+    <Position X="4.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAABAAAAAAAAAAAAAQAAAAAgAAAAQAAQAEAAAA=</HashCode>
+      <FileName>Assets\Scripts\Messages\Battle\MessageUseItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MessageLoginRequest">
+    <Position X="6.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAEAAAAAQAAQgAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Messages\LoginLogout\MessageLoginRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MessageLoginResponse">
+    <Position X="8.75" Y="3.25" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="MessageLoginResponse.LoginResult" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Scripts\Messages\LoginLogout\MessageLoginResponse.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAQAAAAAAAAAAQAAQAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Messages\LoginLogout\MessageLoginResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MessageLogoutRequest" Collapsed="true">
+    <Position X="11" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAQAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Messages\LoginLogout\MessageLogoutRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MessageLogoutResponse">
+    <Position X="13.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAQAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Messages\LoginLogout\MessageLogoutResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MessageRegisterRequest">
+    <Position X="15.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAEAAAAAQAAQgAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Messages\LoginLogout\MessageRegisterRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MessageMazeCreate">
+    <Position X="17.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAQAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Messages\Maze\MessageMazeCreate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MessageMazeRevealTile">
+    <Position X="20" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAIAAQAAAAAAAAAAQAAQAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Messages\Maze\MessageMazeRevealTile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Message">
+    <Position X="19" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAQAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Messages\Message.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MessageDead">
+    <Position X="22.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAIAAQAAAAEAAAAAQAAQAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Messages\MessageDead.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MessagePing">
+    <Position X="24.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAQAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Messages\MessagePing.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MessagePlayersOnlineUpdate">
+    <Position X="29" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAIQAAQAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Messages\MessagePlayersOnlineUpdate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MessageServerQuit">
+    <Position X="33.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAQAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Messages\MessageServerQuit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Singleton&lt;T&gt;">
+    <Position X="11.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\Patterns\Singleton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ScreenTransitioner">
+    <Position X="8.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAECAAAAAQAAAAFAAAAABAgAAAAAAAAAAAQGQ=</HashCode>
+      <FileName>Assets\Scripts\ScreenTransitioner.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UtilsMono">
+    <Position X="10.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\UtilsMono.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TestBattleSystem">
+    <Position X="15" Y="9.5" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="TestBattleSystem.DisplayButtonMode" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Tests\BattleTest\TestBattleSystem.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Class Name="TestBattleSystem.Character" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Tests\BattleTest\TestBattleSystem.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+      <Class Name="TestBattleSystem.Player" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Tests\BattleTest\TestBattleSystem.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="TestBattleSystem.Monster" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Tests\BattleTest\TestBattleSystem.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAgAEIEIAPAAIAgACCDIACCEQoEAIAAAADASAAMoAAI=</HashCode>
+      <FileName>Assets\Tests\BattleTest\TestBattleSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

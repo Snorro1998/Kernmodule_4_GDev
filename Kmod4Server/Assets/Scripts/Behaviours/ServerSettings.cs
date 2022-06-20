@@ -9,4 +9,6 @@ public class ServerSettings
 
     public bool CONNECT_TO_PLAYER_DB = false;
     public bool DOWNLOAD_IMAGES = false;
+
+    public string SESSION_ID;
 }

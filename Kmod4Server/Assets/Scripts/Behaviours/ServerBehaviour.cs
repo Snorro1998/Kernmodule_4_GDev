@@ -25,6 +25,10 @@ public class ServerBehaviour : Singleton<ServerBehaviour>
 
     public ServerSettings settings;
     public bool printDebugMessages = true;
+    public bool started = false;
+
+    public int serverID = 1;
+    public string serverPassword = "SuperGeheim";
 
     delegate void GameEventHandler(DataStreamReader stream, object sender, NetworkConnection connection);
 
@@ -170,9 +174,16 @@ public class ServerBehaviour : Singleton<ServerBehaviour>
         else
         {
             DebugMessages.PrintDebugMessage(DebugMessages.MessageTypes.SERVER_SETTINGS_FILE_DOESNT_EXIST);
-            settings = new ServerSettings();
-            System.IO.File.WriteAllText(Application.dataPath + "/settings.json", JsonUtility.ToJson(settings));
+            UpdateServerSettings(new ServerSettings());
+            //settings = new ServerSettings();
+            //System.IO.File.WriteAllText(Application.dataPath + "/settings.json", JsonUtility.ToJson(settings));
         }
+    }
+
+    private void UpdateServerSettings(ServerSettings InSettings)
+    {
+        settings = InSettings;
+        System.IO.File.WriteAllText(Application.dataPath + "/settings.json", JsonUtility.ToJson(InSettings));
     }
 
     /// <summary>
@@ -226,6 +237,38 @@ public class ServerBehaviour : Singleton<ServerBehaviour>
         }      
     }
 
+    public IEnumerator ServerStartCoroutine()
+    {
+        InitSettings();
+        Debug.Log("Server session id=" + settings.SESSION_ID);
+        yield return StartCoroutine(DBManager.OpenURL("server_login", "server_id=" + serverID.ToString() + "", "server_password=" + serverPassword));
+        
+        if (DBManager.response.Contains("ERROR"))
+        {
+            Debug.LogError("The server could not connect to the database!");
+            yield return 0;
+        }
+        else
+        {
+            Debug.Log("De server kon verbinden met de database!");
+            var responseSessionID = DBManager.response.Trim();
+            if (settings.SESSION_ID != responseSessionID)
+            {
+                Debug.Log("Started a new session");
+                settings.SESSION_ID = responseSessionID;
+                UpdateServerSettings(settings);
+            }
+            else
+            {
+                Debug.Log("Loaded existing session");
+            }
+            //Debug.Log(DBManager.response);
+            //settings.SESSION_ID = DBManager.response.Trim();
+            StartServer();
+        }
+        yield return 0;
+    }
+
     private void StartServer()
     {
         DebugMessages.PrintDebugMessage(DebugMessages.MessageTypes.SERVER_START, settings.NETWORK_PORT.ToString());
@@ -243,6 +286,7 @@ public class ServerBehaviour : Singleton<ServerBehaviour>
         }
         networkConnections = new NativeList<NetworkConnection>(settings.MAX_CONNECTIONS, Allocator.Persistent);
         StartCoroutine(PingClients());
+        started = true;
     }
 
     protected override void Awake()
@@ -254,16 +298,21 @@ public class ServerBehaviour : Singleton<ServerBehaviour>
 
     void Start()
     {
-        StartServer();
+        StartCoroutine(ServerStartCoroutine());
+        //StartServer();
     }
 
     private void OnDestroy()
     {
-        foreach (var connection in networkConnections)
+        if (networkConnections.IsCreated)
         {
-            var message = new MessageServerQuit();
-            MessageManager.SendMessage(networkDriver, message, connection);
+            foreach (var connection in networkConnections)
+            {
+                var message = new MessageServerQuit();
+                MessageManager.SendMessage(networkDriver, message, connection);
+            }
         }
+        
         if (networkDriver.IsCreated) networkDriver.Dispose();
         if (networkConnections.IsCreated) networkConnections.Dispose();
     }
@@ -271,6 +320,7 @@ public class ServerBehaviour : Singleton<ServerBehaviour>
 
     private void Update()
     {
+        if (!started) return;
         networkDriver.ScheduleUpdate().Complete();
         UpdateConnections();
 

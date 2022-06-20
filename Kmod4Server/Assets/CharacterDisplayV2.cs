@@ -43,6 +43,38 @@ public class CharacterDisplayV2 : MonoBehaviour
             {
                 yield return StartCoroutine(DeathFadeAnimation());
                 Debug.Log(character.charName + " stierf!");
+                
+                // upload score
+                yield return StartCoroutine(DBManager.OpenURL("insert_score", "username=" + character.charName + "", "game_id=1", "score=" + character.score));
+                if (DBManager.response.Contains("ERROR"))
+                {
+                    Debug.LogError("Couldnt upload highscore for player " + character.charName + "!");
+                }
+                else
+                {
+                    Debug.Log("Score uploaded!");
+                }
+                
+                yield return new WaitForSeconds(.25f);
+
+                //string HighScores = "";
+                string[] scores = new string[1];
+                // haal scores op
+                yield return StartCoroutine(DBManager.OpenURL("get_scores", "game_id=1", "n_scores=10"));
+                if (DBManager.response.Contains("ERROR"))
+                {
+                    Debug.LogError("Couldnt load highscores!");
+                }
+                else
+                {
+                    Debug.Log("Loaded highscores!");
+                    Debug.Log(DBManager.response);
+                    //HighScores = DBManager.response;
+                    scores = DBManager.response.Split('.');
+                }
+
+                var message = new MessageDead(character.charName, GameManager.Instance.IsPlayer(character.charName), scores);
+                ServerBehaviour.Instance.SendMessageToAllOnline(message);
             }
         }
         //TestBattleSystem.Instance.NextTurn();

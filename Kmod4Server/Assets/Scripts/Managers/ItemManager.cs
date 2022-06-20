@@ -49,6 +49,8 @@ public class ItemManager : Singleton<ItemManager>
         if (item != null)
         {
             item.Use(_amount, GameManager.Instance.GetCharacterByName(target), GameManager.Instance.GetCharacterByName(user));
+            var Character = GameManager.Instance.GetCharacterByName(user);
+            Character.GetPoint();
             UpdateItemButtons();
             SendClientUseItem(_itemName, _amount, target, user);
         }        

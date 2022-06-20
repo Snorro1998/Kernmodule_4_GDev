@@ -11,6 +11,8 @@ public class Character
     public int statDefense = 1;
     public int statMaxHealth = 10;
 
+    public int score = 0;
+
     public Character()
     {
         currentHp = statMaxHealth;
@@ -35,5 +37,10 @@ public class Character
     public void Damage(uint amount)
     {
         currentHp = Mathf.Max(currentHp - (int)amount, 0);
+    }
+
+    public void GetPoint()
+    {
+        score++;
     }
 }

@@ -21,4 +21,5 @@ public enum GameEvent
     GAME_GET_ITEM,
     GAME_USE_ITEM,
     PLAYERMANAGER_UPDATE_PLAYERS,
+    PLAYER_DIED,
 }
