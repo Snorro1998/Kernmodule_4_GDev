@@ -1,23 +1,33 @@
 <?php
 include 'db_connect.php';
 
-$Username = $_GET['username'];
-$Password = $_GET['password'];
+// Session expired
+ExitIfSessionExpired();
 
-if (isset($Username) and isset($Password)) {
-    $result = $mysqli->query("SELECT id FROM RegistredUsers WHERE username = '".$Username."' LIMIT 1");
-    if($result->num_rows == 0) {
-        echo("ERROR_USERNAME_UNKNOWN");
-    } else if ($mysqli->query("SELECT id FROM RegistredUsers WHERE username = '".$Username."' AND password = '" .$Password. "' LIMIT 1")->num_rows > 0) {
-        echo("SUCCES");
-    }
-    else {
-        echo("ERROR_USERNAME_WRONG_PASSWORD");
-    }
+if (isset($_GET['username']) and isset($_GET['password']))
+{
+	$Username = $_GET['username'];
+	$Password = $_GET['password'];
+    $result = $mysqli->query("SELECT id FROM RegistredUsers WHERE username = '".$Username."' AND password = '" .$Password. "' LIMIT 1");
+	
+    if(mysqli_num_rows($result) == 0)
+	{
+        echo("0");
+	}
+	
+    else
+	{
+		$row = $result->fetch_assoc();
+        $_SESSION["server_id"] = $row["id"];
+        echo $row["id"];
+    }	
 }
-else {
-    echo("ERROR_DEFAULT");
+
+else
+{
+    echo "0";
 }
+
 
 $mysqli->close();
 

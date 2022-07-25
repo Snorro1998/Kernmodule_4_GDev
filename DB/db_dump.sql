@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 20, 2022 at 06:15 PM
+-- Generation Time: Jul 25, 2022 at 06:15 PM
 -- Server version: 10.5.16-MariaDB
 -- PHP Version: 7.4.6
 
@@ -69,15 +69,18 @@ INSERT INTO `HighScores` (`id`, `game_id`, `user_id`, `score`, `date`) VALUES
 (3, 2, 3, 10, '2021-08-31 14:54:02'),
 (4, 1, 5, 15, '2021-08-31 15:16:35'),
 (5, 2, 4, 11, '2021-08-31 15:16:35'),
-(6, 2, 1, 5, '2022-05-04 20:26:14'),
+(6, 1, 1, 5, '2022-05-04 20:26:14'),
 (7, 1, 2, 7, '2022-06-20 08:26:12'),
 (8, 1, 3, 4, '2022-06-20 08:40:56'),
 (9, 1, 1, 1, '2022-06-20 08:52:56'),
 (10, 1, 3, 7, '2022-06-20 10:07:27'),
 (11, 1, 1, 1, '2022-06-20 10:15:26'),
-(12, 1, 1, 1, '2022-06-20 10:23:56'),
+(12, 1, 3, 11, '2022-06-20 10:23:56'),
 (13, 1, 1, 1, '2022-06-20 10:28:49'),
-(14, 1, 1, 1, '2022-06-20 10:31:03');
+(14, 1, 12, 1, '2022-06-20 10:31:03'),
+(15, 1, 7, 5, '2022-07-09 11:30:18'),
+(16, 1, 2, 9, '2022-07-25 11:35:01'),
+(17, 1, 17, 3, '2022-07-25 14:53:12');
 
 -- --------------------------------------------------------
 
@@ -105,15 +108,20 @@ INSERT INTO `RegistredUsers` (`id`, `username`, `email`, `password`, `reg_date`)
 (5, 'Ton', 'tmarkus@hyves.nl', 'Markus', '2021-06-20 19:42:46'),
 (6, 'Sietse', 'speedboot@kameleon.nl', 'Klinkhamer', '2021-06-20 19:43:20'),
 (7, 'Tjaard', 'tjaaaaaard@vv.nl', 'VV', '2021-06-21 14:26:42'),
-(8, 'Kulau', 'poezebeest@kat.tw', 'Miauw', '2021-06-21 14:38:47'),
+(8, 'Meessie', 'poezebeest@kat.tw', 'Miauw', '2021-06-21 14:38:47'),
 (9, 'ShinChan', 'koeliejoelie@foxkids.jp', 'Nohara', '2021-08-31 17:50:11'),
-(10, 'Ardynell', 'ardy@snor.ie', 'Gezelligheid', '2022-04-17 12:02:43'),
+(10, 'Ardynell', 'ardy@snor.nl', 'Wauw', '2022-04-17 12:02:43'),
 (11, 'Samson', 'mwoahgertjuh@studio100.be', 'Hond', '2022-04-17 14:50:54'),
-(12, 'Alberto', 'hetisalberto@studio100.be', 'Dagiedereeeeeeeen', '2022-04-17 15:02:46'),
+(12, 'Alberto', 'hetisalbertoooo@studio100.be', 'Dagiedereeeeeeeen', '2022-04-17 15:02:46'),
 (13, 'Mark', 'minsterpresident@overheid.nl', 'Rutte', '2022-04-17 15:11:02'),
 (14, 'Philip', 'golflengte@natuurkunde.nl', 'Habing', '2022-04-17 15:13:21'),
-(15, 'Gert', 'neesamson@studio100.be', 'marleneke', '2022-04-17 15:14:59'),
-(16, 'Aang', 'appa@yipyip.fr', 'Avatar', '2022-04-17 15:20:44');
+(15, 'Gert', 'neesamson@studio100.be', 'XoxoMarleneke', '2022-04-17 15:14:59'),
+(16, 'Aang', 'appa@yipyip.fr', 'Avatar', '2022-04-17 15:20:44'),
+(17, 'Folkert', 'medicijnman@woah.nl', 'Burp', '2022-07-09 11:35:56'),
+(18, 'Sinterklaas', 'stoomboot@kado.nl', 'Pepernoot', '2022-07-25 17:49:03'),
+(19, 'Garfield', 'ihateodie@arbuckle.us', 'Lasagna', '2022-07-25 17:59:06'),
+(20, 'Geert', 'geertwiltwatwilders@tweedekamer.nl', 'Wilders', '2022-07-25 18:02:34'),
+(21, 'MrWolf', 'yesyesyesyes@awolf.ca', 'Awoe', '2022-07-25 18:06:09');
 
 -- --------------------------------------------------------
 
@@ -176,13 +184,13 @@ ALTER TABLE `Games`
 -- AUTO_INCREMENT for table `HighScores`
 --
 ALTER TABLE `HighScores`
-  MODIFY `id` int(6) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(6) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `RegistredUsers`
 --
 ALTER TABLE `RegistredUsers`
-  MODIFY `id` int(6) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(6) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `Servers`
